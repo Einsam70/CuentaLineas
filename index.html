@@ -4,20 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TextMetrika — Análisis y Limpieza de Archivos</title>
-
   <style>
     :root {
         color-scheme: light;
         font-family: Arial, sans-serif;
     }
-
     body {
         margin: 0;
         min-height: 100vh;
         background: #f7f8fa;
         color: #1f2933;
     }
-
     header {
         display: flex;
         align-items: center;
@@ -27,25 +24,21 @@
         border-bottom: 1px solid #d9e2ec;
         background: white;
     }
-
     h1 {
         margin: 0;
         font-size: 24px;
         color: #1f2933;
     }
-
     main {
         width: min(1180px, calc(100% - 32px));
         margin: 28px auto;
     }
-
     .panel {
         padding: 22px;
         border: 1px solid #d9e2ec;
         border-radius: 8px;
         background: white;
     }
-
     .formGrid {
         display: flex;
         flex-wrap: wrap;
@@ -53,7 +46,6 @@
         margin-bottom: 16px;
         align-items: center;
     }
-
     .drop-zone {
         width: 100%;
         box-sizing: border-box;
@@ -69,23 +61,19 @@
         transition: background 0.2s, border-color 0.2s;
         text-align: center;
     }
-
     .drop-zone--over {
         border-color: #1f5f99;
         background: #e4eaf1;
     }
-
     .drop-zone p {
         margin: 0 0 12px 0;
         color: #486581;
     }
-
     .checkbox-group {
         display: flex;
         flex-wrap: wrap;
         gap: 16px;
     }
-
     .checkbox-label {
         display: flex;
         align-items: center;
@@ -93,7 +81,6 @@
         font-weight: normal;
         cursor: pointer;
     }
-
     button {
         padding: 10px 16px;
         border: 1px solid #1f5f99;
@@ -104,22 +91,18 @@
         font-weight: bold;
         cursor: pointer;
     }
-
     button:hover {
         background: #174a78;
     }
-
     button.secondary {
         background: transparent;
         color: #486581;
         border: 1px solid #bcccdc;
     }
-
     button.secondary:hover {
         background: #f7f8fa;
         border-color: #627d98;
     }
-
     button.success {
         background: #247c46;
         border-color: #247c46;
@@ -127,7 +110,6 @@
     button.success:hover {
         background: #1b5e34;
     }
-
     /* Botones pequeños dentro de la tabla */
     .btn-sm {
         padding: 4px 8px;
@@ -135,43 +117,35 @@
         font-weight: normal;
         border-radius: 3px;
     }
-
     .action-group {
         display: flex;
         gap: 4px;
     }
-
     .table-container {
         overflow-x: auto;
         margin-top: 24px;
     }
-
     table {
         width: 100%;
         border-collapse: collapse;
         text-align: left;
     }
-
     th, td {
         padding: 12px;
         border-bottom: 1px solid #d9e2ec;
         vertical-align: middle;
     }
-
     th {
         background-color: #f0f4f8;
         color: #1f2933;
     }
-
     tr:hover {
         background-color: #f7f8fa;
     }
-
     .totals-row {
         font-weight: bold;
         background-color: #e4eaf1;
     }
-
     .tools-box {
         margin-top: 24px;
         padding: 18px;
@@ -191,13 +165,11 @@
         gap: 10px;
     }
 </style>
-
 </head>
 <body>
   <header>
     <h1>TextMetrika</h1>
   </header>
-
   <main>
     <section class="panel">
         <div class="formGrid">
@@ -206,7 +178,6 @@
             <input type="file" id="fileInput" accept=".txt, .csv, .js, .html, .css, .py, .sh, .md" multiple style="display: none;">
           </div>
         </div>
-
         <div class="formGrid">
           <div class="checkbox-group">
             <label class="checkbox-label">
@@ -217,12 +188,10 @@
             </label>
           </div>
         </div>
-
         <div class="formGrid" style="gap: 10px;">
           <button onclick="processFiles()">Analizar archivos</button>
           <button class="secondary" onclick="clearForm()">Limpiar formulario</button>
         </div>
-
         <div id="resultsContainer" style="display: none;">
           <div class="table-container">
             <table id="resultsTable">
@@ -239,7 +208,6 @@
               <tbody id="resultsBody"></tbody>
             </table>
           </div>
-
           <div class="tools-box" id="globalToolsBox">
             <h3>🧹 Herramientas Globales (Combinar todos los archivos)</h3>
             <p style="margin: 0 0 14px 0; font-size: 14px; color: #486581;">
@@ -254,37 +222,30 @@
         </div>
     </section>
   </main>
-
 <script>
 let filesList = [];
-// Estructura interna para separar los datos por archivo usando su índice
 let processedFilesMap = {}; 
-
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const dropZoneText = document.getElementById('dropZoneText');
-
 fileInput.addEventListener('change', (e) => {
   if (e.target.files.length > 0) {
     filesList = Array.from(e.target.files);
     updateDropZoneText();
   }
 });
-
 ['dragenter', 'dragover'].forEach(eventName => {
   dropZone.addEventListener(eventName, (e) => {
     e.preventDefault();
     dropZone.classList.add('drop-zone--over');
   }, false);
 });
-
 ['dragleave', 'drop'].forEach(eventName => {
   dropZone.addEventListener(eventName, (e) => {
     e.preventDefault();
     dropZone.classList.remove('drop-zone--over');
   }, false);
 });
-
 dropZone.addEventListener('drop', (e) => {
   const dt = e.dataTransfer;
   if (dt.files.length > 0) {
@@ -292,73 +253,55 @@ dropZone.addEventListener('drop', (e) => {
     updateDropZoneText();
   }
 });
-
 function updateDropZoneText() {
   dropZoneText.innerText = filesList.length === 1 
     ? `Archivo seleccionado: ${filesList[0].name}` 
     : `${filesList.length} archivos seleccionados`;
 }
-
 async function processFiles() {
   if (filesList.length === 0) {
     alert('Por favor selecciona o arrastra al menos un archivo.');
     return;
   }
-
   const ignoreEmpty = document.getElementById('ignoreEmpty').checked;
   const ignoreComments = document.getElementById('ignoreComments').checked;
   const resultsBody = document.getElementById('resultsBody');
-  
   resultsBody.innerHTML = '';
   processedFilesMap = {}; 
-  
   let totalSizeAll = 0;
   let totalLinesAll = 0;
   let totalCountedAll = 0;
   let totalWordsAll = 0;
-
   const promises = filesList.map((file, index) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
-      
       reader.onload = function(event) {
         const contents = event.target.result;
         const lines = contents.split(/\r\n|\r|\n/);
-        
         let fileWords = 0;
         let fileCountedLines = 0;
         let fileValidLinesArray = [];
-
         if (contents.trim() !== '') {
           fileWords = contents.trim().split(/\s+/).filter(w => w.length > 0).length;
         }
-        
         lines.forEach(line => {
           const trimmed = line.trim();
-          
           if (ignoreEmpty && trimmed === '') return; 
           if (ignoreComments && (trimmed.startsWith('//') || trimmed.startsWith('#'))) return;
-          
           fileCountedLines++;
           fileValidLinesArray.push(line); 
         });
-
-        // Guardamos de forma aislada usando el índice del archivo
         processedFilesMap[index] = {
           name: file.name,
           lines: fileValidLinesArray
         };
-
         totalSizeAll += file.size;
         totalLinesAll += lines.length;
         totalCountedAll += fileCountedLines;
         totalWordsAll += fileWords;
-
         const sizeStr = file.size > 1024 * 1024 
           ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` 
           : `${(file.size / 1024).toFixed(2)} KB`;
-
-        // Generamos botones específicos para esta fila pasando el índice
         const row = `
           <tr>
             <td><strong>${file.name}</strong></td>
@@ -378,18 +321,14 @@ async function processFiles() {
         resultsBody.insertAdjacentHTML('beforeend', row);
         resolve();
       };
-      
       reader.readAsText(file);
     });
   });
-
   await Promise.all(promises);
-
   if (filesList.length > 1) {
     const totalSizeStr = totalSizeAll > 1024 * 1024 
       ? `${(totalSizeAll / (1024 * 1024)).toFixed(2)} MB` 
       : `${(totalSizeAll / 1024).toFixed(2)} KB`;
-
     const totalsRow = `
       <tr class="totals-row">
         <td>TOTAL (${filesList.length} archivos)</td>
@@ -403,21 +342,15 @@ async function processFiles() {
     resultsBody.insertAdjacentHTML('beforeend', totalsRow);
     document.getElementById('globalToolsBox').style.display = 'block';
   } else {
-    // Si solo hay un archivo, ocultamos la caja global porque las acciones de fila bastan
     document.getElementById('globalToolsBox').style.display = 'none';
   }
-
   document.getElementById('resultsContainer').style.display = 'block';
 }
-
-// PROCEDIMIENTO 1: Exportar un único archivo específico de la lista
 function downloadSingleProcessed(index, mode) {
   const fileData = processedFilesMap[index];
   if (!fileData) return;
-
   let outputLines = [...fileData.lines];
   let filenameSuffix = "_filtrado";
-
   if (mode === 'unique') {
     outputLines = [...new Set(outputLines)];
     filenameSuffix = "_sin_duplicados";
@@ -425,29 +358,20 @@ function downloadSingleProcessed(index, mode) {
     outputLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     filenameSuffix = "_ordenado";
   }
-
   const baseName = fileData.name.substring(0, fileData.name.lastIndexOf('.')) || 'archivo';
   const extension = fileData.name.substring(fileData.name.lastIndexOf('.')) || '.txt';
-  
   triggerDownload(outputLines.join('\n'), `${baseName}${filenameSuffix}${extension}`);
 }
-
-// PROCEDIMIENTO 2: Exportar y unificar TODOS los archivos de golpe
 function downloadAllProcessed(mode) {
   let allLines = [];
-  
-  // Consolidamos las líneas de todos los archivos respetando el mapeo
   Object.keys(processedFilesMap).forEach(key => {
     allLines.push(...processedFilesMap[key].lines);
   });
-
   if (allLines.length === 0) {
     alert("No hay líneas procesadas para descargar.");
     return;
   }
-
   let filenameSuffix = "_todos_filtrados";
-
   if (mode === 'unique') {
     allLines = [...new Set(allLines)];
     filenameSuffix = "_todos_sin_duplicados";
@@ -455,11 +379,8 @@ function downloadAllProcessed(mode) {
     allLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     filenameSuffix = "_todos_ordenados";
   }
-
   triggerDownload(allLines.join('\n'), `TextMetrika_consolidado${filenameSuffix}.txt`);
 }
-
-// Helper común para ejecutar la descarga nativa local
 function triggerDownload(content, fullFilename) {
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const link = document.createElement('a');
@@ -469,16 +390,13 @@ function triggerDownload(content, fullFilename) {
   link.click();
   document.body.removeChild(link);
 }
-
 function clearForm() {
   filesList = [];
   processedFilesMap = {};
   fileInput.value = '';
   dropZoneText.innerText = 'Arrastra tus archivos aquí o haz clic para buscarlos';
-  
   document.getElementById('ignoreEmpty').checked = true;
   document.getElementById('ignoreComments').checked = false;
-  
   document.getElementById('resultsBody').innerHTML = '';
   document.getElementById('resultsContainer').style.display = 'none';
 }
