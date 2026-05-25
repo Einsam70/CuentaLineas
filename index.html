@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contador de líneas de archivos</title>
+<title>TextMetrika — Análisis y Limpieza de Archivos</title>
 
   <style>
     :root {
@@ -31,15 +31,7 @@
     h1 {
         margin: 0;
         font-size: 24px;
-    }
-
-    a {
-        color: #1f5f99;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
+        color: #1f2933;
     }
 
     main {
@@ -54,97 +46,441 @@
         background: white;
     }
 
-    .panel + .panel {
-        margin-top: 18px;
-    }
-
     .formGrid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
         margin-bottom: 16px;
+        align-items: center;
     }
 
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 6px;
-    }
-
-    input,
-    select {
+    .drop-zone {
         width: 100%;
         box-sizing: border-box;
-        padding: 8px 10px;
-        border: 1px solid #bcccdc;
-        border-radius: 4px;
-        font: inherit;
-        background: white;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #bcccdc;
+        border-radius: 8px;
+        background: #f7f8fa;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+        text-align: center;
+    }
+
+    .drop-zone--over {
+        border-color: #1f5f99;
+        background: #e4eaf1;
+    }
+
+    .drop-zone p {
+        margin: 0 0 12px 0;
+        color: #486581;
+    }
+
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: normal;
+        cursor: pointer;
     }
 
     button {
-        padding: 8px 14px;
+        padding: 10px 16px;
         border: 1px solid #1f5f99;
         border-radius: 4px;
         background: #1f5f99;
         color: white;
         font: inherit;
+        font-weight: bold;
         cursor: pointer;
     }
 
-    button:disabled {
-        border-color: #bcccdc;
-        background: #bcccdc;
-        cursor: not-allowed;
+    button:hover {
+        background: #174a78;
     }
 
+    button.secondary {
+        background: transparent;
+        color: #486581;
+        border: 1px solid #bcccdc;
+    }
+
+    button.secondary:hover {
+        background: #f7f8fa;
+        border-color: #627d98;
+    }
+
+    button.success {
+        background: #247c46;
+        border-color: #247c46;
+    }
+    button.success:hover {
+        background: #1b5e34;
+    }
+
+    /* Botones pequeños dentro de la tabla */
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: normal;
+        border-radius: 3px;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 4px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        margin-top: 24px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #d9e2ec;
+        vertical-align: middle;
+    }
+
+    th {
+        background-color: #f0f4f8;
+        color: #1f2933;
+    }
+
+    tr:hover {
+        background-color: #f7f8fa;
+    }
+
+    .totals-row {
+        font-weight: bold;
+        background-color: #e4eaf1;
+    }
+
+    .tools-box {
+        margin-top: 24px;
+        padding: 18px;
+        background: #f0f4f8;
+        border: 1px solid #d9e2ec;
+        border-radius: 6px;
+    }
+    .tools-box h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        color: #1f2933;
+        font-size: 18px;
+    }
+    .tools-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
 </style>
 
 </head>
 <body>
   <header>
-    <h1>Contador de líneas de archivos</h1>
+    <h1>TextMetrika</h1>
   </header>
 
   <main>
     <section class="panel">
         <div class="formGrid">
-          <div>
-            <input type="file" id="fileInput" accept=".txt, .csv">
+          <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <p id="dropZoneText">Arrastra tus archivos aquí o haz clic para buscarlos</p>
+            <input type="file" id="fileInput" accept=".txt, .csv, .js, .html, .css, .py, .sh, .md" multiple style="display: none;">
           </div>
         </div>
+
         <div class="formGrid">
-          <div>
-            <button onclick="countLines()">Contar líneas</button>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="ignoreEmpty" checked> Ignorar líneas vacías
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="ignoreComments"> Ignorar comentarios (//, #)
+            </label>
           </div>
         </div>
-        <div class="formGrid">
-          <div>
-            <p id="lineCount">Resultado</p>
+
+        <div class="formGrid" style="gap: 10px;">
+          <button onclick="processFiles()">Analizar archivos</button>
+          <button class="secondary" onclick="clearForm()">Limpiar formulario</button>
+        </div>
+
+        <div id="resultsContainer" style="display: none;">
+          <div class="table-container">
+            <table id="resultsTable">
+              <thead>
+                <tr>
+                  <th>Archivo</th>
+                  <th>Tamaño</th>
+                  <th>Líneas Totales</th>
+                  <th>Líneas Filtro</th>
+                  <th>Palabras</th>
+                  <th>Acciones individuales</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="tools-box" id="globalToolsBox">
+            <h3>🧹 Herramientas Globales (Combinar todos los archivos)</h3>
+            <p style="margin: 0 0 14px 0; font-size: 14px; color: #486581;">
+              Aplica las acciones uniendo el contenido filtrado de <strong>todos</strong> los archivos analizados en un único documento:
+            </p>
+            <div class="tools-buttons">
+              <button class="success" onclick="downloadAllProcessed('clean')">Descargar Todo Filtrado</button>
+              <button class="secondary" onclick="downloadAllProcessed('unique')">Eliminar Duplicados Totales</button>
+              <button class="secondary" onclick="downloadAllProcessed('sort')">Ordenar Todo Alfabéticamente</button>
+            </div>
           </div>
         </div>
     </section>
   </main>
 
 <script>
-function countLines() {
-  const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
-  
-  if (!file) {
-    alert('Por favor selecciona un archivo.');
+let filesList = [];
+// Estructura interna para separar los datos por archivo usando su índice
+let processedFilesMap = {}; 
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const dropZoneText = document.getElementById('dropZoneText');
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    filesList = Array.from(e.target.files);
+    updateDropZoneText();
+  }
+});
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drop-zone--over');
+  }, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drop-zone--over');
+  }, false);
+});
+
+dropZone.addEventListener('drop', (e) => {
+  const dt = e.dataTransfer;
+  if (dt.files.length > 0) {
+    filesList = Array.from(dt.files);
+    updateDropZoneText();
+  }
+});
+
+function updateDropZoneText() {
+  dropZoneText.innerText = filesList.length === 1 
+    ? `Archivo seleccionado: ${filesList[0].name}` 
+    : `${filesList.length} archivos seleccionados`;
+}
+
+async function processFiles() {
+  if (filesList.length === 0) {
+    alert('Por favor selecciona o arrastra al menos un archivo.');
     return;
   }
+
+  const ignoreEmpty = document.getElementById('ignoreEmpty').checked;
+  const ignoreComments = document.getElementById('ignoreComments').checked;
+  const resultsBody = document.getElementById('resultsBody');
   
-  const reader = new FileReader();
+  resultsBody.innerHTML = '';
+  processedFilesMap = {}; 
   
-  reader.onload = function(event) {
-    const contents = event.target.result;
-    const lineCount = contents.split(/\r\n|\r|\n/).length;
-    document.getElementById('lineCount').textContent = `El archivo tiene ${lineCount} líneas.`;
-  };
+  let totalSizeAll = 0;
+  let totalLinesAll = 0;
+  let totalCountedAll = 0;
+  let totalWordsAll = 0;
+
+  const promises = filesList.map((file, index) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        const contents = event.target.result;
+        const lines = contents.split(/\r\n|\r|\n/);
+        
+        let fileWords = 0;
+        let fileCountedLines = 0;
+        let fileValidLinesArray = [];
+
+        if (contents.trim() !== '') {
+          fileWords = contents.trim().split(/\s+/).filter(w => w.length > 0).length;
+        }
+        
+        lines.forEach(line => {
+          const trimmed = line.trim();
+          
+          if (ignoreEmpty && trimmed === '') return; 
+          if (ignoreComments && (trimmed.startsWith('//') || trimmed.startsWith('#'))) return;
+          
+          fileCountedLines++;
+          fileValidLinesArray.push(line); 
+        });
+
+        // Guardamos de forma aislada usando el índice del archivo
+        processedFilesMap[index] = {
+          name: file.name,
+          lines: fileValidLinesArray
+        };
+
+        totalSizeAll += file.size;
+        totalLinesAll += lines.length;
+        totalCountedAll += fileCountedLines;
+        totalWordsAll += fileWords;
+
+        const sizeStr = file.size > 1024 * 1024 
+          ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` 
+          : `${(file.size / 1024).toFixed(2)} KB`;
+
+        // Generamos botones específicos para esta fila pasando el índice
+        const row = `
+          <tr>
+            <td><strong>${file.name}</strong></td>
+            <td>${sizeStr}</td>
+            <td>${lines.length}</td>
+            <td>${fileCountedLines}</td>
+            <td>${fileWords.toLocaleString()}</td>
+            <td>
+              <div class="action-group">
+                <button class="success btn-sm" onclick="downloadSingleProcessed(${index}, 'clean')">Filtrado</button>
+                <button class="secondary btn-sm" onclick="downloadSingleProcessed(${index}, 'unique')">Sin Duplicados</button>
+                <button class="secondary btn-sm" onclick="downloadSingleProcessed(${index}, 'sort')">A-Z</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        resultsBody.insertAdjacentHTML('beforeend', row);
+        resolve();
+      };
+      
+      reader.readAsText(file);
+    });
+  });
+
+  await Promise.all(promises);
+
+  if (filesList.length > 1) {
+    const totalSizeStr = totalSizeAll > 1024 * 1024 
+      ? `${(totalSizeAll / (1024 * 1024)).toFixed(2)} MB` 
+      : `${(totalSizeAll / 1024).toFixed(2)} KB`;
+
+    const totalsRow = `
+      <tr class="totals-row">
+        <td>TOTAL (${filesList.length} archivos)</td>
+        <td>${totalSizeStr}</td>
+        <td>${totalLinesAll}</td>
+        <td>${totalCountedAll}</td>
+        <td>${totalWordsAll.toLocaleString()}</td>
+        <td>-</td>
+      </tr>
+    `;
+    resultsBody.insertAdjacentHTML('beforeend', totalsRow);
+    document.getElementById('globalToolsBox').style.display = 'block';
+  } else {
+    // Si solo hay un archivo, ocultamos la caja global porque las acciones de fila bastan
+    document.getElementById('globalToolsBox').style.display = 'none';
+  }
+
+  document.getElementById('resultsContainer').style.display = 'block';
+}
+
+// PROCEDIMIENTO 1: Exportar un único archivo específico de la lista
+function downloadSingleProcessed(index, mode) {
+  const fileData = processedFilesMap[index];
+  if (!fileData) return;
+
+  let outputLines = [...fileData.lines];
+  let filenameSuffix = "_filtrado";
+
+  if (mode === 'unique') {
+    outputLines = [...new Set(outputLines)];
+    filenameSuffix = "_sin_duplicados";
+  } else if (mode === 'sort') {
+    outputLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    filenameSuffix = "_ordenado";
+  }
+
+  const baseName = fileData.name.substring(0, fileData.name.lastIndexOf('.')) || 'archivo';
+  const extension = fileData.name.substring(fileData.name.lastIndexOf('.')) || '.txt';
   
-  reader.readAsText(file);
+  triggerDownload(outputLines.join('\n'), `${baseName}${filenameSuffix}${extension}`);
+}
+
+// PROCEDIMIENTO 2: Exportar y unificar TODOS los archivos de golpe
+function downloadAllProcessed(mode) {
+  let allLines = [];
+  
+  // Consolidamos las líneas de todos los archivos respetando el mapeo
+  Object.keys(processedFilesMap).forEach(key => {
+    allLines.push(...processedFilesMap[key].lines);
+  });
+
+  if (allLines.length === 0) {
+    alert("No hay líneas procesadas para descargar.");
+    return;
+  }
+
+  let filenameSuffix = "_todos_filtrados";
+
+  if (mode === 'unique') {
+    allLines = [...new Set(allLines)];
+    filenameSuffix = "_todos_sin_duplicados";
+  } else if (mode === 'sort') {
+    allLines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    filenameSuffix = "_todos_ordenados";
+  }
+
+  triggerDownload(allLines.join('\n'), `TextMetrika_consolidado${filenameSuffix}.txt`);
+}
+
+// Helper común para ejecutar la descarga nativa local
+function triggerDownload(content, fullFilename) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.download = fullFilename;
+  link.href = URL.createObjectURL(blob);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function clearForm() {
+  filesList = [];
+  processedFilesMap = {};
+  fileInput.value = '';
+  dropZoneText.innerText = 'Arrastra tus archivos aquí o haz clic para buscarlos';
+  
+  document.getElementById('ignoreEmpty').checked = true;
+  document.getElementById('ignoreComments').checked = false;
+  
+  document.getElementById('resultsBody').innerHTML = '';
+  document.getElementById('resultsContainer').style.display = 'none';
 }
 </script>
 </body>
