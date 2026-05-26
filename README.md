@@ -1,8 +1,10 @@
 # 📊 TextMetrika — Análisis y Limpieza de Archivos
 
-![Licencia](https://img.shields.io/badge/license-MIT-green)
-![Tecnologías](https://img.shields.io/badge/tech-HTML5%20%7C%20CSS3%20%7C%20JS%20(Vanilla)-blue)
-![Privacidad](https://img.shields.io/badge/privacy-100%25%20Local-orange)
+[![Licencia: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Pure-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/es/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/HTML5-Pure-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/es/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-Pure-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/es/docs/Web/CSS)
+[![Privacidad](https://img.shields.io/badge/privacy-100%25%20Local-orange)](https://developer.mozilla.org/en-US/docs/Web/Privacy)
 
 **TextMetrika** es una utilidad web portable ideada para el análisis estático, curación y limpieza de archivos de texto y código fuente. Todo el procesamiento ocurre de manera **100% local en tu navegador** mediante la API `FileReader`, lo que garantiza una privacidad absoluta al no subir jamás tus documentos a ningún servidor externo.
 
