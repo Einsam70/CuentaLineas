@@ -1,24 +1,62 @@
-# 1. Función
+# 📊 TextMetrika — Análisis y Limpieza de Archivos
 
-Utilidad para el análisis y limpieza de archivos. Especialmente ideada para archivos de código (html, php, js, py, etc) al objeto de eliminar líneas vacías y líneas de comentarios o anotaciones dentro del código.
+![Licencia](https://img.shields.io/badge/license-MIT-green)
+![Tecnologías](https://img.shields.io/badge/tech-HTML5%20%7C%20CSS3%20%7C%20JS%20(Vanilla)-blue)
+![Privacidad](https://img.shields.io/badge/privacy-100%25%20Local-orange)
 
-Es también útil para ordenar palabras dentro de archivos de diccionario.
+**TextMetrika** es una utilidad web portable ideada para el análisis estático, curación y limpieza de archivos de texto y código fuente. Todo el procesamiento ocurre de manera **100% local en tu navegador** mediante la API `FileReader`, lo que garantiza una privacidad absoluta al no subir jamás tus documentos a ningún servidor externo.
 
-Todo ocurre en tu navegador, no precisa conexión a internet y funciona en modo portable.
+---
 
-# 2. Como utilizar
+## 🎯 Características Principales
 
-El único archivo necesario es "index.html". Puedes subir archivos de modo individual o masiva. El análisis te detallará el número de líneas (con y sin líneas vacías) así como el número de palabras y tamaño del documento.
+* **📁 Soporte Multi-archivo & Drag-and-Drop:** Arrastra múltiples archivos simultáneamente a la zona interactiva o utiliza el explorador clásico.
+* **🔍 Métricas Detalladas:** Obtén de un vistazo el tamaño del documento, líneas totales, líneas filtradas y conteo real de palabras.
+* **⚡ Filtros Inteligentes para Código:** Opción de ignorar líneas vacías o comentarios de sintaxis estándar (`//` y `#`), ideal para auditar código fuente limpio.
+* **🧹 Herramientas de Curación Quirúrgica:**
+  * **Individual:** Descarga cualquier archivo de la lista aplicando de forma aislada los filtros establecidos, eliminando líneas duplicadas o reordenándolo alfabéticamente.
+  * **Masiva (Consolidación):** Une el contenido de todos los archivos procesados en un único documento limpio, sin duplicados o completamente ordenado de la A a la Z.
 
-![Imagen mostrando aplicación](/screenshots/TexMetrika.png)
+---
 
-Podrás filtrar los datos indicando si quieres que cuente las líneas vacías o las líneas con comentarios.
+## 🛠️ Tecnologías Utilizadas
 
-De modo individual podrás exportar estos archivos con los filtrados que establezcas (especialmente útil para programación).
+Para garantizar la máxima velocidad, portabilidad y ligereza, el proyecto ha sido desarrollado utilizando tecnologías web nativas, sin dependencias ni librerías externas pesadas:
+* **HTML5** (Estructura semántica y API de arrastrar y soltar)
+* **CSS3** (Diseño limpio, responsivo y adaptado al esquema de color del sistema)
+* **Vanilla JavaScript** (Lectura asíncrona de archivos mediante `Promises` y manipulación de texto en memoria)
 
-Las otras dos funciones que podrás realizar a modo individual o masivo están pensadas para archivos tipo diccionario. Individualmente podrás eliminar duplicados u ordenar alfabeticamente el contenido. De modo masivo podrás hacer lo mismo pero obteniendo el resultado en un único archivo.
+---
 
-# 3. Por hacer
+## 🚀 Cómo Utilizar
 
-- Opción otros idiomas
-- Modo oscuro
+Al ser una aplicación portable, no requiere instalación ni un entorno de servidor local (`Node.js`, `Apache`, etc.):
+
+1. Descarga o clona este repositorio.
+2. Abre el archivo `index.html` en cualquier navegador moderno (Chrome, Firefox, Edge, Safari).
+3. ¡Listo! Ya puedes empezar a arrastrar tus archivos `.txt`, `.csv`, `.js`, `.py`, `.md` o `.html` para procesarlos al instante.
+
+![Captura de pantalla de TextMetrika](/screenshots/TexMetrika.png)
+
+---
+
+## 📝 Ejemplos de Casos de Uso
+
+* **Desarrollo de Software:** Limpiar comentarios temporales y líneas en blanco de scripts antes de su distribución o cálculo de métricas de código bruto.
+* **Gestión de Diccionarios y Listas:** Unificar múltiples listas de palabras, eliminar registros duplicados de manera fulminante y ordenarlas alfabéticamente de la A a la Z en segundos.
+* **Auditoría de Datos:** Analizar rápidamente el tamaño y volumen de palabras de archivos estructurados planos (como logs o ficheros `.csv`).
+
+---
+
+## 📌 Próximas Mejoras (Roadmap)
+
+- [ ] Soporte multilingüe (Selector de idiomas)
+- [ ] Conmutador de **Modo Oscuro** automático/manual
+- [ ] Soporte extendido para bloques de comentarios multilínea (`/* ... */`)
+- [ ] Filtro de visualización interactivo en la tabla por extensión de archivo
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Siéntete libre de clonarlo, modificarlo y adaptarlo a tus necesidades.
